@@ -1,5 +1,6 @@
 const express = require("express");
 const { exec } = require("child_process");
+const path = require("path");
 
 const app = express();
 
@@ -7,7 +8,7 @@ app.set("port", process.env.PORT || 5000);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static(path.join(__dirname,'..', "public","build")));
 app.post("/", (req, res) => {
   const { program } = req.body;
 
@@ -29,3 +30,6 @@ app.post("/", (req, res) => {
 app.listen(app.get("port"), () => {
   console.log(`Server is running on port ${app.get("port")}...`);
 });
+
+
+

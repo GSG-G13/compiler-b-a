@@ -32,6 +32,7 @@ class App extends React.Component {
           <textarea
             value={code}
             onChange={(e) => this.setState({ code: e.target.value })}
+            placeholder="Write your code here..."
           />
         </div>
         <div className="run">
