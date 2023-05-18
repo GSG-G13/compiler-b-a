@@ -1,52 +1,48 @@
-import React from 'react';
+import React from "react";
+import axios from "axios";
+import "./App.css";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      code: '',
-      result:'',
-    };
-  }
-
-  handleCodeChange = (event) => {
-    this.setState({ code: event.target.value });
+  state = {
+    code: "",
+    result: "",
+    error: false,
   };
 
-  handleSubmit = () => {
-    // Send a POST request to '/api' with the code
-    fetch('/', {
-      method: 'POST',
-      body: JSON.stringify({ program: this.state.code }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState((prevState) => ({
-          result:data.stdout
-        }));
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error('Error:', error);
-      });
+  handleRun = async () => {
+    try {
+      const { data } = await axios.post("/", { program: this.state.code });
+      if (!data.error) {
+        this.setState({ result: data.result, error: false });
+      } else {
+        this.setState({ result: data.result, error: true });
+      }
+    } catch (error) {
+      console.log("Something went wrong");
+    }
   };
 
   render() {
-
+    console.log(this.state);
+    const { code, result, error } = this.state;
     return (
-      <div>
-        <textarea
-          value={this.state.code}
-          onChange={this.handleCodeChange}
-          rows={10}
-          cols={50}
-          style={{ marginBottom: '10px' }}
-        />
-        <button onClick={this.handleSubmit}>Submit</button>
-        <pre>{this.state.result}</pre>
+      <div className="content">
+        <div className="terminal">
+          <i className="fa-brands fa-js"></i>
+          <textarea
+            value={code}
+            onChange={(e) => this.setState({ code: e.target.value })}
+          />
+        </div>
+        <div className="run">
+          <button onClick={this.handleRun}>Run</button>
+        </div>
+        <div className="result">
+          <h3>Result</h3>
+          <pre style={error ? { color: "red" } : { color: "#28a745" }}>
+            {result}
+          </pre>
+        </div>
       </div>
     );
   }
